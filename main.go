@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/list/",  services.FrontController(controller.List))
 	http.HandleFunc("/home/",   services.FrontController(controller.Home))
 	http.HandleFunc("/login/",  controller.Login)
+	http.HandleFunc("/logout/",  controller.Logout)
 	err := http.ListenAndServe(conf.ListenHostPort,nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

@@ -120,3 +120,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, "./public/login.html")
 }
+
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	for _, v := range r.Cookies() {
+		if v.Name == "session_token" &&  config.HasSesion(v.Value){
+			config.DeleteSession(v.Value)
+			return
+		}
+	}
+	conf:= config.GetConf()
+	http.Redirect(w,r, conf.AppGetWayHost + "/login/",http.StatusSeeOther)
+
+}

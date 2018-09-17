@@ -12,11 +12,16 @@
     <link rel="stylesheet" href="/css/table.css">
 </head>
 <body>
+<a href="/logout/">Выйти</a>
 
 <div id="loading"></div>
 <div id="app">
     <div id="table-wrapper" class="ui container">
         <h2><strong>resumes</strong></h2>
+        <vuetable-pagination ref="pagination"
+                             :css="css.pagination"
+                             @vuetable-pagination:change-page="onChangePage"
+        ></vuetable-pagination>
         <vuetable ref="vuetable"
                   api-url="/list/"
                   :fields="fields"
@@ -41,10 +46,7 @@
                 </div>
             </template>
         </vuetable>
-        <vuetable-pagination ref="pagination"
-                             :css="css.pagination"
-                             @vuetable-pagination:change-page="onChangePage"
-        ></vuetable-pagination>
+
     </div>
 </div>
 
@@ -74,10 +76,7 @@
                     title: 'Avatar',
                     callback: 'avatar'
                 },
-                {
-                    name: 'email',
-                    title: 'Email',
-                },
+
                 {
                     name: 'email',
                     title: 'Email',
