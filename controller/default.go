@@ -23,8 +23,6 @@ func List(w http.ResponseWriter, r *http.Request) {
 	)
 	conf:= config.GetConf()
 
-
-
 	if r.URL.Path != "/list/" {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return

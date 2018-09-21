@@ -15,6 +15,15 @@
 <a href="/logout/">Выйти</a>
 
 <div id="loading"></div>
+
+<div class="form-inline form-group">
+    <label>Search:</label>
+    <input v-model="searchFor" class="form-control" @keyup.enter="onFilterSet" placeholder="Ticket number, reasons, car name and more.">
+    <button class="btn btn-primary" @click="onFilterSet">Go</button>
+    <button class="btn btn-default" @click="onFilterReset">Reset</button>
+</div>
+
+
 <div id="app">
     <div id="table-wrapper" class="ui container">
         <h2><strong>resumes</strong></h2>
@@ -25,6 +34,7 @@
         <vuetable ref="vuetable"
                   api-url="/list/"
                   :fields="fields"
+                  :append-params="moreParams"
                   :sort-order="sortOrder"
                   :css="css.table"
                   :per-page="15"
@@ -61,6 +71,10 @@
             'vuetable-pagination': Vuetable.VuetablePagination
         },
         data: {
+            searchFor: '',
+            moreParams: [
+                'filter='
+            ],
             fields: [
                 {
                     name: 'first_name',
@@ -173,7 +187,20 @@
             onLoaded() {
                 document.getElementById('loading').style.display = 'none';
                 console.log('loaded! hide spinner here')
+            },
+
+            onFilterSet (filterText) {
+                this.moreParams.filter = filterText;
+                console.log(filterText);
+                //this.moreParams['filter'] = filterText
+                this.$nextTick( () => this.$refs.vuetable.refresh() )
+            },
+            onFilterReset () {
+                delete this.moreParams.filter;
+                this.searchFor = '';
+                this.$nextTick( () => this.$refs.vuetable.refresh() )
             }
+
         }
     })
 </script>
