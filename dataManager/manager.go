@@ -9,6 +9,7 @@ import (
 	"../config"
 )
 var userCount int
+var like string
 
 type ManagerDb struct {
 	db *sql.DB
@@ -19,10 +20,28 @@ func init() {
 	mdb = GetInstance()
 }
 
-func (md *ManagerDb) GetCount() int{
-	if userCount == 0{
+func (md *ManagerDb) GetCount(filter string) int{
+	if userCount == 0 || filter != like {
+		like = filter
 		log.Println("init count")
-		mdb.db.QueryRow("SELECT count(`id_resume`) FROM `resume`").Scan(&userCount)
+		sql:="SELECT count(`id_resume`) FROM `resume`"
+		if filter != "" {
+			sql+=" WHERE LOWER(position) LIKE LOWER(?)"
+		}
+
+		stmt, err  := mdb.db.Prepare(sql)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		if filter != "" {
+			row := stmt.QueryRow("%"+filter+"%")
+			err = row.Scan(&userCount)
+		}else {
+			mdb.db.QueryRow(sql).Scan(&userCount)
+
+		}
+
 	}
 	return  userCount
 }
@@ -38,8 +57,13 @@ func (md *ManagerDb) IsExistByResume(idResume string) bool{
 	return  count != 0
 }
 
-func (md *ManagerDb) GetRowsWithFiles(limit int, offset int)([]*entities.User,error) {
-	stmt, err  := mdb.db.Prepare(`
+func (md *ManagerDb) GetRowsWithFiles(limit int, offset int,filter string)([]*entities.User,error) {
+
+	var(
+		rows *sql.Rows
+		err error
+	)
+	sql:= `
 SELECT
 	r.id_resume AS id,
 	r.first_name,
@@ -50,16 +74,31 @@ SELECT
 	r.position,
 COALESCE((SELECT f.patch  FROM file as f  WHERE f.id_resume = r.id_resume ),'') as  patch 
 FROM 
-(select id_resume,first_name,last_name,email,phone,salary,id_file,position FROM resume ORDER BY id_resume LIMIT ? OFFSET ?) as r
+(select id_resume,first_name,last_name,email,phone,salary,id_file,position FROM resume 
+`
+	if filter!="" {
+		sql+="WHERE LOWER(position) LIKE LOWER(?)"
+	}
+
+
+	sql+=
+` ORDER BY id_resume LIMIT ? OFFSET ?) as r
  LEFT JOIN file AS f
 ON f.id = r.id_file
-`)
+`
+
+	stmt, err  := mdb.db.Prepare(sql)
 	if err != nil {
 		log.Println(err)
 		return nil,err
 	}
 	defer stmt.Close()
-	rows, err := stmt.Query(limit,offset)
+	if filter != "" {
+		rows, err = stmt.Query("%"+filter+"%",limit,offset)
+	}else{
+		rows, err = stmt.Query(limit,offset)
+	}
+
 	if err != nil {
 		log.Println(err)
 		return nil,err

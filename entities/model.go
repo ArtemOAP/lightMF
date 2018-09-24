@@ -35,6 +35,7 @@ type List struct {
 	PrevPageUrl string `json:"prev_page_url"`
 	From int `json:"from"`
 	To int `json:"to"`
+	Filter string `json:"filter"`
 	Users []*User  `json:"users"`
 }
 

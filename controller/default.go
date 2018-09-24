@@ -39,14 +39,15 @@ func List(w http.ResponseWriter, r *http.Request) {
 			 page = 0
 		 }
 	 }
-	 count:= dataManager.GetInstance().GetCount()
+	 filter:= r.URL.Query().Get("filter")
+	 count:= dataManager.GetInstance().GetCount(filter)
 	 offset:=  page * limit
 	 if page == 1 || page == 0{
 	 	page= 1
 	 	offset = 0
 	 }
 	//log.Printf("start_select")
-	items,er = dataManager.GetInstance().GetRowsWithFiles(limit,offset)
+	items,er = dataManager.GetInstance().GetRowsWithFiles(limit,offset,filter)
 	//log.Printf("end_select")
 	if er!= nil{
 		http.Error(w,"error db",http.StatusInternalServerError)
@@ -57,6 +58,7 @@ func List(w http.ResponseWriter, r *http.Request) {
 	list.PerPage = limit
 	list.CurrentPage = page
 	list.LastPage =count / limit - 1
+	list.Filter = filter
 	if page < list.LastPage{
 		list.NextPageUrl = conf.AppGetWayHost + "/list/?page=" + strconv.Itoa(page+1)
 	}
@@ -88,6 +90,21 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeFile(w, r, "./public/list.html")
+
+}
+
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.Redirect(w,r,"/home/",http.StatusSeeOther)
 
 }
 
