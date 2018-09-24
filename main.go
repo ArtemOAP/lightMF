@@ -6,8 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"./controller"
 	"./config"
-	"simpelPanel/services"
-)
+	"./services"
+	)
 
 func main() {
 
@@ -18,7 +18,6 @@ func main() {
 	http.HandleFunc("/list/",   services.FrontController(controller.List))
 	http.HandleFunc("/home/",   services.FrontController(controller.Home))
 	http.HandleFunc("/login/",  controller.Login)
-	//http.HandleFunc("/",  controller.Index)
 	http.HandleFunc("/logout/",  controller.Logout)
 	err := http.ListenAndServe(conf.ListenHostPort,nil)
 	if err != nil {
