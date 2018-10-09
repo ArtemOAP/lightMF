@@ -23,6 +23,7 @@ func init(){
 			log.Fatalf("File config no valid - error: %v", errY)
 		}
 		log.Println("start: ",CONF.AppName)
+		log.Println("listen ",CONF.AppGetWayHost)
 
 
 

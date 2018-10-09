@@ -1,9 +1,10 @@
 app_name: 'lightMF'
 app_listen_host: 'host:port'
 app_get_way_host: 'http://my.site/'
-db_name:  'dbname'
-db_user:  'user'
-db_pass:  'pass'
+db:
+    db_name:  'dbname'
+    db_user:  'user'
+    db_pass:  'pass'
 admin_name: 'root'
 admin_pass: 'pass'
 token_len: 30

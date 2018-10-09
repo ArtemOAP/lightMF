@@ -44,9 +44,11 @@ type Configured struct {
 	Session map[string]string
 	ListenHostPort string `yaml:"app_listen_host"`
 	AppGetWayHost string `yaml:"app_get_way_host"`
-	DbName string `yaml:"db_name"`
-	DbUser string `yaml:"db_user"`
-	DbPass string `yaml:"db_pass"`
+	Db struct{
+		DbName string `yaml:"db_name"`
+		DbUser string `yaml:"db_user"`
+		DbPass string `yaml:"db_pass"`
+	} `yaml:"db"`
 	AdminName string `yaml:"admin_name"`
 	AdminPass string `yaml:"admin_pass"`
 	TokenLen int `yaml:"token_len"`

@@ -122,12 +122,11 @@ ON f.id = r.id_file
 	return items,err
 }
 
-
 func GetInstance() *ManagerDb {
 	var err error
 	var db *sql.DB
 	if mdb == nil {
-		params:= config.GetConf()
+		params:= config.GetConf().Db
 		db, err = sql.Open("mysql", params.DbUser+":"+params.DbPass+"@/"+params.DbName)
 		if err != nil {
 			panic(err)
