@@ -6,9 +6,9 @@ import (
 	"../config"
 )
 
-type handler func(w http.ResponseWriter, r *http.Request)
+type MyHandler func(w http.ResponseWriter, r *http.Request)
 
-func FrontController(pass handler) handler {
+func FrontController(pass MyHandler) MyHandler {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -26,3 +26,26 @@ func FrontController(pass handler) handler {
 	}
 }
 
+
+
+func GetOnly(h MyHandler) MyHandler {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			h(w, r)
+			return
+		}
+		http.Error(w, "get only", http.StatusMethodNotAllowed)
+	}
+}
+
+func PostOnly(h MyHandler) MyHandler {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			h(w, r)
+			return
+		}
+		http.Error(w, "post only", http.StatusMethodNotAllowed)
+	}
+}

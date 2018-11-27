@@ -10,7 +10,9 @@ import (
 	"../services"
 	"../config"
 	"time"
-)
+	"strings"
+	"fmt"
+	)
 
 const limit = 50
 
@@ -75,6 +77,26 @@ func List(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
+
+}
+func User(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	log.Println(r.URL)
+	p := strings.Split(r.URL.Path, "/")
+	fmt.Printf("%v",p)
+	id,_:= strconv.Atoi(p[2])
+
+
+	user,er:=dataManager.GetInstance().GetRowById(id)
+	if er!= nil{
+		log.Println(er)
+	}
+
+	json.NewEncoder(w).Encode(user)
+
+
+	//http.ServeFile(w, r, "./public/list.html")
 
 }
 

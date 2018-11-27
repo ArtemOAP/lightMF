@@ -122,6 +122,41 @@ ON f.id = r.id_file
 	return items,err
 }
 
+
+func (md *ManagerDb) GetRowById(Id int)(*entities.User,error) {
+
+	var(
+		err error
+	)
+	sql:= `
+SELECT
+	r.id_resume AS id,
+	r.first_name,
+	r.last_name,
+	r.email,
+	r.phone,
+	r.salary,
+	r.position,
+COALESCE((SELECT f.patch  FROM file as f  WHERE f.id_resume = r.id_resume ),'') as  patch 
+FROM 
+ resume as r
+WHERE  r.id_resume = ?
+
+`
+stmt, err  := mdb.db.Prepare(sql)
+	if err != nil {
+		log.Println(err)
+		return nil,err
+	}
+	defer stmt.Close()
+	row := stmt.QueryRow(Id)
+	item:= new(entities.User)
+	err = row.Scan(&item.Id,&item.FirstName,&item.LastName,&item.Email,&item.Phone,&item.Salary,&item.Position,&item.Path)
+
+	return item,err
+}
+
+
 func GetInstance() *ManagerDb {
 	var err error
 	var db *sql.DB
