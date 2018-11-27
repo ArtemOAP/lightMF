@@ -29,7 +29,7 @@ func main() {
 	rh.DefaultHandleFunc("/home/",   services.FrontController(services.GetOnly(controller.Home)))
 	rh.DefaultHandleFunc("/login/",  controller.Login)
 	rh.DefaultHandleFunc("/logout/",  controller.Logout)
-	rh.HandleFunc(regexp.MustCompile("/user/[0-9]+"),services.FrontController(services.GetOnly(controller.User))
+	rh.HandleFunc(regexp.MustCompile("/user/[0-9]+"),services.FrontController(services.GetOnly(controller.User)))
 
 	err := http.ListenAndServe(conf.ListenHostPort,rh)
 	if err != nil {
